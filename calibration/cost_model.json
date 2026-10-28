@@ -1,0 +1,32 @@
+{
+  "prefill_floor_s": 0.0367951,
+  "prefill_per_token_s": 6.5854899e-05,
+  "prefill_per_token2_s": 7.4183769e-08,
+  "decode_base_s": 0.03235073,
+  "decode_per_seq_s": 0.0001181104,
+  "swap_base_s": 0.000256775,
+  "swap_per_token_s": 9.400605e-07,
+  "fit_quality": {
+    "prefill": {
+      "median_rel_err": 0.0168,
+      "max_rel_err": 0.0471,
+      "worst_at": 32.0,
+      "points": 10
+    },
+    "decode": {
+      "median_rel_err": 0.0248,
+      "max_rel_err": 0.3662,
+      "worst_at": 4.0,
+      "points": 8
+    },
+    "swap": {
+      "median_rel_err": 0.038,
+      "max_rel_err": 0.2188,
+      "worst_at": 256.0,
+      "points": 5
+    }
+  },
+  "device": "Tesla T4",
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "source": "measured -- fitted from calibration_t4.csv by fit_cost_model.py"
+}

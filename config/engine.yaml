@@ -1,0 +1,24 @@
+# Engine configuration: models one vLLM/Orca-style continuous-batching worker.
+#
+# Numbers below describe a single NVIDIA T4 (16 GB) running a small model, which is
+# what the Colab calibration notebook measures. Change these to model a bigger GPU.
+
+max_batch_size: 32          # max sequences resident in one forward pass
+block_size: 16              # KV cache page size, in tokens (vLLM PagedAttention default)
+kv_blocks_total: 1024       # total KV pages => 1024*16 = 16384 tokens of KV capacity
+max_prefill_tokens: 2048    # token budget for prefill work in a single iteration
+
+# Sarathi-Serve style chunked prefill. When true, a long prefill is split into
+# chunks of `prefill_chunk_size` tokens and interleaved with ongoing decodes,
+# so decoding never stalls behind a long prompt.
+chunked_prefill: false
+prefill_chunk_size: 512
+
+# What preempting a running request costs.
+#   recompute  vLLM's default: discard the victim's KV, re-prefill prompt + generated later.
+#   swap       FastServe-style: copy the KV to host memory and back; no progress is lost.
+# Experiment E6 shows this choice decides whether preemptive policies are viable at all.
+preemption_mode: recompute
+
+# Safety valve for the simulator: abort a run that exceeds this many iterations.
+max_iterations: 2000000

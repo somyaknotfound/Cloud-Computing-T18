@@ -1,0 +1,33 @@
+# Workload definitions. All are seeded, so every run is byte-for-byte reproducible.
+#
+# Length distributions are lognormal, which is what real chat traces (ShareGPT,
+# Azure LLM inference traces) look like: a short median with a heavy tail.
+#   median tokens = exp(mean_log)
+
+default:
+  description: "ShareGPT-like chat traffic: short median, heavy tail."
+  num_requests: 1500
+  seed: 42
+  arrival_rate: 8.0                 # requests/sec, Poisson
+  prompt_len:  {mean_log: 5.5, sigma_log: 0.80, min: 8, max: 4096}   # median ~244 tok
+  output_len:  {mean_log: 4.6, sigma_log: 0.90, min: 1, max: 2048}   # median ~100 tok
+  class_mix:   {interactive: 0.7, batch: 0.3}
+
+bimodal:
+  description: "Mixed tenancy: short interactive chats alongside long batch jobs."
+  num_requests: 1500
+  seed: 42
+  arrival_rate: 8.0
+  bimodal: true
+  short_fraction: 0.8
+  prompt_len:       {mean_log: 4.6, sigma_log: 0.50, min: 8,  max: 512}
+  output_len:       {mean_log: 3.4, sigma_log: 0.50, min: 1,  max: 256}    # median ~30 tok
+  long_prompt_len:  {mean_log: 6.9, sigma_log: 0.40, min: 64, max: 8192}
+  long_output_len:  {mean_log: 6.4, sigma_log: 0.40, min: 32, max: 4096}   # median ~600 tok
+  class_mix:   {interactive: 0.8, batch: 0.2}
+
+# Service-level objectives, per request class. A request is "good" (counts toward
+# goodput) only if it meets BOTH its TTFT and its TPOT target.
+slo:
+  interactive: {ttft_s: 1.0, tpot_s: 0.10}
+  batch:       {ttft_s: 10.0, tpot_s: 0.50}

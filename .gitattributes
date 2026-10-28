@@ -1,0 +1,2 @@
+# Results must be byte-identical on every OS, so they are always checked out with LF.
+*.csv text eol=lf
